@@ -71,11 +71,11 @@ pipeline {
             }
         }
 
-          stage('Run Application') {
+       stage('Run Application') {
             steps {
                 script {
                     echo "Running the application from Docker image"
-                    powershell "docker run -d --name ${CONTAINER_NAME} -p 5000:5001 ${DOCKER_IMAGE}:latest"
+                    powershell "docker run -d --name ${CONTAINER_NAME} -p 8081:80 ${DOCKER_IMAGE}:latest"
                 }
             }
         }
