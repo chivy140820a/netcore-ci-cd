@@ -42,9 +42,9 @@ pipeline {
                     echo "Updating appsettings.json"
 
                     // Đường dẫn đến file appsettings.json
-                    def appSettingsFile = "appsettings.json"
+                    def appSettingsFile = "path/to/your/appsettings.json"
                     // Trường cần cập nhật
-                    def fieldToUpdate = "Logging:LogLevel:Default"
+                    def fieldToUpdate = "Logging.LogLevel.Default"
                     // Giá trị mới bạn muốn gán
                     def newValue = "Information"
 
@@ -54,7 +54,7 @@ pipeline {
                         \$json = Get-Content -Path '${appSettingsFile}' | ConvertFrom-Json
 
                         # Cập nhật trường cụ thể
-                        \$json.$fieldToUpdate = '$newValue'
+                        \$json.Logging.'LogLevel:Default' = '$newValue'
 
                         # Ghi lại file JSON
                         \$json | ConvertTo-Json -Depth 10 | Set-Content -Path '${appSettingsFile}'
