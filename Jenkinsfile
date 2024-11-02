@@ -50,26 +50,5 @@ pipeline {
                 }
             }
         }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    echo "Building Docker image"
-                    powershell "docker build -t ${DOCKER_IMAGE}:latest ."
-                }
-            }
-        }
-
-         stage('Push Docker Image') {
-            steps {
-                withCredentials(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
-                    script {
-                        echo "Pushing Docker image to registry"
-                        powershell "docker push ${DOCKER_IMAGE}:latest"
-                    }
-                }
-            }
-        }
-
     }
 }
