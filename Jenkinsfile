@@ -9,5 +9,24 @@ pipeline {
                 }
             }
         }
+
+        stage('Build') {
+            steps {
+                script {
+                    echo "Building the .NET application"
+                    sh 'dotnet build'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    echo "Running tests"
+                    sh 'dotnet test'
+                }
+            }
+        }
+
     }
 }
