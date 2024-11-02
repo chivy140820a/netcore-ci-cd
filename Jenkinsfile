@@ -65,7 +65,7 @@ pipeline {
 
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
-                    sh 'docker push chivy14082000/netccicd'
+                    powershell "docker push chivy14082000/netccicd"
                 }
             }
         }
