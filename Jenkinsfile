@@ -1,5 +1,11 @@
 pipeline {
     agent any
+
+    environment {
+        DOCKER_IMAGE = "chivy14082000/netccicd"
+        DOCKER_REGISTRY_CREDENTIALS_ID = 'docker-hub'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -35,5 +41,35 @@ pipeline {
                 }
             }
         }
+
+        stage('Publish') {
+            steps {
+                script {
+                    echo "Publishing the application"
+                    powershell 'dotnet publish -c Release -o publish'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "Building Docker image"
+                    powershell "docker build -t ${DOCKER_IMAGE}:latest ."
+                }
+            }
+        }
+
+         stage('Push Docker Image') {
+            steps {
+                withCredentials(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
+                    script {
+                        echo "Pushing Docker image to registry"
+                        powershell "docker push ${DOCKER_IMAGE}:latest"
+                    }
+                }
+            }
+        }
+
     }
 }
