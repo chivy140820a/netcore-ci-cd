@@ -75,7 +75,7 @@ pipeline {
             steps {
                 script {
                     echo "Running the application from Docker image"
-                    powershell "docker run -d --name ${CONTAINER_NAME} -p 5001:8000 ${DOCKER_IMAGE}:latest"
+                    powershell "docker run -d --name ${CONTAINER_NAME} -p 5000:5001 ${DOCKER_IMAGE}:latest"
                 }
             }
         }
