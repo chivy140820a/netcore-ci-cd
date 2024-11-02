@@ -42,7 +42,7 @@ pipeline {
                     echo "Updating appsettings.json"
 
                     // Đường dẫn đến file appsettings.json
-                    def appSettingsFile = "path/to/your/appsettings.json"
+                    def appSettingsFile = "appsettings.json"
                     // Trường cần cập nhật
                     def fieldToUpdate = "Logging.LogLevel.Default"
                     // Giá trị mới bạn muốn gán
