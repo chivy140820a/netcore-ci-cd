@@ -50,5 +50,15 @@ pipeline {
                 }
             }
         }
+
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "Building Docker image"
+                    powershell "docker build -t ${DOCKER_IMAGE}:latest ."
+                }
+            }
+        }
     }
 }
