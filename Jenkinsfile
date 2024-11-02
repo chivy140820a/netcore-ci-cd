@@ -9,29 +9,31 @@ pipeline {
                 }
             }
         }
-         stage('Check .NET Version 1') {
+         stage('Check .NET Version') {
             steps {
-                powershell '''
-                    dotnet --version
-                '''
+               script {
+                    echo "Check version"
+                    powershell 'dotnet --version'
+                }
             }
         }
 
         stage('Build') {
             steps {
-                powershell '''
-                    dotnet build
-                '''
+               script {
+                    echo "Building the .NET application"
+                    powershell 'dotnet build'
+                }
             }
         }
 
         stage('Test') {
             steps {
-                powershell '''
-                    dotnet test
-                '''
+               script {
+                    echo "Running tests"
+                    powershell 'dotnet test'
+                }
             }
         }
-
     }
 }
