@@ -76,15 +76,26 @@ pipeline {
             steps {
                 script {
                     echo "Checking if the container is running"
-                    def containerRunning = powershell(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
+                     // Kiểm tra nếu container đã tồn tại
+                    def containerExists = powershell(script: "docker ps -aq -f name=${CONTAINER_NAME}", returnStdout: true).trim()
 
-                    if (containerRunning) {
-                        echo "Stopping and removing the old container"
-                        powershell "docker stop ${CONTAINER_NAME}"
+                   if (containerExists) {
+                        // Kiểm tra xem container có đang chạy không
+                        def containerRunning = powershell(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
+
+                        if (containerRunning) {
+                            echo "Stopping and removing the old running container"
+                            // Dừng và xóa container đang chạy
+                            powershell "docker stop ${CONTAINER_NAME}"
+                        }
+
+                        echo "Removing the old container"
+                        // Xóa container cũ (đang dừng hoặc đã dừng)
                         powershell "docker rm ${CONTAINER_NAME}"
                     }
 
                     echo "Running the application from Docker image"
+                    // Chạy container mới
                     powershell "docker run -d --name ${CONTAINER_NAME} -p 8081:80 ${DOCKER_IMAGE}:latest"
                 }
             }
