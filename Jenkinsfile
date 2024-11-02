@@ -60,5 +60,15 @@ pipeline {
                 }
             }
         }
+
+         stage('Push Docker Image') {
+            steps {
+                withCredentials(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
+                    script {
+                        powershell "docker push ${DOCKER_IMAGE}:latest"
+                    }
+                }
+            }
+        }
     }
 }
