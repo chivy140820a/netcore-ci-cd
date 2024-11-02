@@ -56,7 +56,7 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image"
-                    powershell "docker build -t ${DOCKER_IMAGE}:latest ."
+                    powershell "docker build ./CICDNetcore -t ${DOCKER_IMAGE}:latest ."
                 }
             }
         }
