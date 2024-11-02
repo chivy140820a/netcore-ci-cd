@@ -105,15 +105,20 @@ pipeline {
             steps {
                 script {
                     echo "Checking if the old image exists"
-                    def oldImageExists = sh(script: "docker images -q ${DOCKER_IMAGE}:old", returnStatus: true) == 0
+                    // Kiểm tra nếu image cũ tồn tại
+                    def oldImageExists = powershell(script: "docker images -q ${DOCKER_IMAGE}:old", returnStdout: true).trim()
 
                     if (oldImageExists) {
                         echo "Removing old image"
-                        powershell "docker rmi ${OLD_IMAGE_TAG}"
+                        // Xóa image cũ
+                        powershell "docker rmi ${DOCKER_IMAGE}:old"
+                    } else {
+                        echo "No old image found"
                     }
                 }
             }
         }
+        
     }
     
     post {
