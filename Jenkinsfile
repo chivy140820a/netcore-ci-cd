@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "chivy14082000/netccicd"
         DOCKER_REGISTRY_CREDENTIALS_ID = 'docker-hub'
+          CONTAINER_NAME = "myapp_container"
     }
 
     stages {
@@ -69,5 +70,15 @@ pipeline {
                 }
             }
         }
+
+          stage('Run Application') {
+            steps {
+                script {
+                    echo "Running the application from Docker image"
+                    powershell "docker run -d --name ${CONTAINER_NAME} -p 8000:80 ${DOCKER_IMAGE}:latest"
+                }
+            }
+        }
+        
     }
 }
