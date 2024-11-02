@@ -4,7 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = "chivy14082000/netccicd"
         DOCKER_REGISTRY_CREDENTIALS_ID = 'docker-hub'
-        CONTAINER_NAME = "myapp_container"
+        CONTAINER_NAME = "myapp_container" 
+        OLD_IMAGE_TAG = "${DOCKER_IMAGE}:old"
     }
 
     stages {
@@ -75,7 +76,7 @@ pipeline {
             steps {
                 script {
                     echo "Checking if the container is running"
-                    def containerRunning = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStatus: true) == 0
+                    def containerRunning = powershell(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
 
                     if (containerRunning) {
                         echo "Stopping and removing the old container"
