@@ -10,6 +10,14 @@ pipeline {
             }
         }
 
+         stage('Check .NET Version') {
+            steps {
+                script {
+                    sh 'dotnet --version'
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
