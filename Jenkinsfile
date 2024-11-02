@@ -9,6 +9,13 @@ pipeline {
                 }
             }
         }
+         stage('Check .NET Version 1') {
+            steps {
+                powershell '''
+                    dotnet --version
+                '''
+            }
+        }
 
          stage('Check .NET Version') {
             steps {
