@@ -61,12 +61,11 @@ pipeline {
             }
         }
 
-         stage('Push Docker Image') {
+        stage('Packaging/Pushing imagae') {
+
             steps {
-                withCredentials(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
-                    script {
-                        powershell "docker push ${DOCKER_IMAGE}:latest"
-                    }
+                withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
+                    sh 'docker push chivy14082000/netccicd'
                 }
             }
         }
