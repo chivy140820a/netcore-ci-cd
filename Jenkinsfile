@@ -54,7 +54,7 @@ pipeline {
                         \$json = Get-Content -Path '${appSettingsFile}' | ConvertFrom-Json
 
                         # Cập nhật trường cụ thể
-                        \$json.Logging.'LogLevel:Default' = '$newValue'
+                        \$json.Logging.'LogLevel.Default' = '$newValue'
 
                         # Ghi lại file JSON
                         \$json | ConvertTo-Json -Depth 10 | Set-Content -Path '${appSettingsFile}'
