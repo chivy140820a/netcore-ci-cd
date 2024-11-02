@@ -17,29 +17,19 @@ pipeline {
             }
         }
 
-         stage('Check .NET Version') {
-            steps {
-                script {
-                    sh 'dotnet --version'
-                }
-            }
-        }
-
         stage('Build') {
             steps {
-                script {
-                    echo "Building the .NET application"
-                    sh 'dotnet build'
-                }
+                powershell '''
+                    dotnet build
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                script {
-                    echo "Running tests"
-                    sh 'dotnet test'
-                }
+                powershell '''
+                    dotnet test
+                '''
             }
         }
 
