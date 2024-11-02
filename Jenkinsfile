@@ -6,6 +6,7 @@ pipeline {
         DOCKER_REGISTRY_CREDENTIALS_ID = 'docker-hub'
         CONTAINER_NAME = "myapp_container" 
         OLD_IMAGE_TAG = "${DOCKER_IMAGE}:old"
+        APP_ENV = "Production"
     }
 
     stages {
@@ -31,6 +32,33 @@ pipeline {
                script {
                     echo "Building the .NET application"
                     powershell 'dotnet build'
+                }
+            }
+        }
+
+        stage('Update Configuration') {
+            steps {
+                script {
+                    echo "Updating appsettings.json"
+
+                    // Đường dẫn đến file appsettings.json
+                    def appSettingsFile = "appsettings.json"
+                    // Trường cần cập nhật
+                    def fieldToUpdate = "Logging:LogLevel:Default"
+                    // Giá trị mới bạn muốn gán
+                    def newValue = "Information"
+
+                    // Sử dụng PowerShell để đọc và cập nhật file JSON
+                    powershell """
+                        # Đọc nội dung file JSON
+                        \$json = Get-Content -Path '${appSettingsFile}' | ConvertFrom-Json
+
+                        # Cập nhật trường cụ thể
+                        \$json.$fieldToUpdate = '$newValue'
+
+                        # Ghi lại file JSON
+                        \$json | ConvertTo-Json -Depth 10 | Set-Content -Path '${appSettingsFile}'
+                    """
                 }
             }
         }
