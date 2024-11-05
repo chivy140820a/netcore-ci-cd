@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  app:
+    image: chivy14082000/netccicd:${VERSION_TAG}
+    ports:
+      - "8081:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    restart: always

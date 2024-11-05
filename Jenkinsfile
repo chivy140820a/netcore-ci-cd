@@ -6,7 +6,8 @@ pipeline {
         DOCKER_REGISTRY_CREDENTIALS_ID = 'docker-hub'
         CONTAINER_NAME = "myapp_container" 
         OLD_IMAGE_TAG = "${DOCKER_IMAGE}:old"
-        APP_ENV = "Production"
+        VERSION_TAG = "${env.BUILD_NUMBER}"
+        APP_ENV = "Development"
     }
 
     stages {
@@ -86,7 +87,7 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image"
-                    powershell "docker build -t ${DOCKER_IMAGE}:latest ./CICDNetcore"
+                    powershell "docker build -t ${DOCKER_IMAGE}:${VERSION_TAG} ./CICDNetcore"
                 }
             }
         }
@@ -95,65 +96,73 @@ pipeline {
 
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
-                    powershell "docker push chivy14082000/netccicd"
+                    powershell "docker push ${DOCKER_IMAGE}:${VERSION_TAG}"
                 }
             }
         }
-
-        stage('Run Application') {
-            steps {
-                script {
-                    echo "Checking if the container is running"
-                     // Kiểm tra nếu container đã tồn tại
-                    def containerExists = powershell(script: "docker ps -aq -f name=${CONTAINER_NAME}", returnStdout: true).trim()
-
-                   if (containerExists) {
-                        // Kiểm tra xem container có đang chạy không
-                        def containerRunning = powershell(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
-
-                        if (containerRunning) {
-                            echo "Stopping and removing the old running container"
-                            // Dừng và xóa container đang chạy
-                            powershell "docker stop ${CONTAINER_NAME}"
-                        }
-
-                        echo "Removing the old container"
-                        // Xóa container cũ (đang dừng hoặc đã dừng)
-                        powershell "docker rm ${CONTAINER_NAME}"
-                    }
-
-                    echo "Running the application from Docker image"
-                    // Chạy container mới
-                    powershell "docker run -d --name ${CONTAINER_NAME} -p 8081:80 ${DOCKER_IMAGE}:latest"
-                }
-            }
+        stage('Run Application with Docker Compose') { 
+            steps { 
+                script { 
+                    echo "Running the application using Docker Compose" 
+                    powershell "VERSION_TAG=${VERSION_TAG} docker-compose up -d" 
+                } 
+            } 
         }
+        // stage('Run Application') {
+        //     steps {
+        //         script {
+        //             echo "Checking if the container is running"
+        //              // Kiểm tra nếu container đã tồn tại
+        //             def containerExists = powershell(script: "docker ps -aq -f name=${CONTAINER_NAME}", returnStdout: true).trim()
+
+        //            if (containerExists) {
+        //                 // Kiểm tra xem container có đang chạy không
+        //                 def containerRunning = powershell(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
+
+        //                 if (containerRunning) {
+        //                     echo "Stopping and removing the old running container"
+        //                     // Dừng và xóa container đang chạy
+        //                     powershell "docker stop ${CONTAINER_NAME}"
+        //                 }
+
+        //                 echo "Removing the old container"
+        //                 // Xóa container cũ (đang dừng hoặc đã dừng)
+        //                 powershell "docker rm ${CONTAINER_NAME}"
+        //             }
+
+        //             echo "Running the application from Docker image"
+        //             // Chạy container mới
+        //             powershell "docker run -d --name ${CONTAINER_NAME} -p 8081:80 ${DOCKER_IMAGE}:latest"
+        //         }
+        //     }
+        // }
         
-        stage('Cleanup Old Image') {
-            steps {
-                script {
-                    echo "Checking if the old image exists"
-                    // Kiểm tra nếu image cũ tồn tại
-                    def oldImageExists = powershell(script: "docker images -q ${DOCKER_IMAGE}:old", returnStdout: true).trim()
+        // stage('Cleanup Old Image') {
+        //     steps {
+        //         script {
+        //             echo "Checking if the old image exists"
+        //             // Kiểm tra nếu image cũ tồn tại
+        //             def oldImageExists = powershell(script: "docker images -q ${DOCKER_IMAGE}:old", returnStdout: true).trim()
 
-                    if (oldImageExists) {
-                        echo "Removing old image"
-                        // Xóa image cũ
-                        powershell "docker rmi ${DOCKER_IMAGE}:old"
-                    } else {
-                        echo "No old image found"
-                    }
-                }
-            }
-        }
+        //             if (oldImageExists) {
+        //                 echo "Removing old image"
+        //                 // Xóa image cũ
+        //                 powershell "docker rmi ${DOCKER_IMAGE}:old"
+        //             } else {
+        //                 echo "No old image found"
+        //             }
+        //         }
+        //     }
+        // }
         
     }
     
     post {
         success {
             script {
-                echo "Renaming the current image to 'old' for future cleanup"
-                powershell "docker tag ${DOCKER_IMAGE}:latest ${OLD_IMAGE_TAG}"
+                // echo "Renaming the current image to 'old' for future cleanup"
+                // powershell "docker tag ${DOCKER_IMAGE}:latest ${OLD_IMAGE_TAG}"
+                echo "Build successful, Docker image version tagged as ${VERSION_TAG}"
             }
         }
         failure {
