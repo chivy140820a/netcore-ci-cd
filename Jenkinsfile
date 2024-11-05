@@ -100,6 +100,22 @@ pipeline {
                 }
             }
         }
+        stage('Cleanup Old Containers and Images') { 
+            steps { 
+                script { 
+                    echo "Stopping and removing old containers" 
+                    // Stopping and removing all running containers 
+                    powershell """ 
+                    docker ps -q | ForEach-Object {docker stop $_; docker rm $_} 
+                    """ 
+                    echo "Removing old images" 
+                    // Removing all images except the latest one 
+                    powershell 
+                    """ docker images -q ${DOCKER_IMAGE} | ForEach-Object {docker rmi -f $_} 
+                    """ 
+                } 
+            } 
+        }
         stage('Run Application with Docker Compose') { 
             steps { 
                 script { 
