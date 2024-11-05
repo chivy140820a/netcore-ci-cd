@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    image: chivy14082000/netccicd:${VERSION_TAG}
+    image: chivy14082000/netccicd:53
     ports:
       - "8081:80"
     environment:
