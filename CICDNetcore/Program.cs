@@ -6,8 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-var directoryPath = @"/app/keys";
-builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(directoryPath)).ProtectKeysWithDpapi();
+//var directoryPath = @"/app/keys";
+builder.Services.AddDataProtection().UseCryptographicAlgorithms(
+    new AuthenticatedEncryptorConfiguration
+    {
+        EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+        ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
