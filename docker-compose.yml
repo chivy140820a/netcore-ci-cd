@@ -7,4 +7,6 @@ services:
       - "8081:80"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
+    volumes:
+      - ./keys:/app/keys
     restart: always
