@@ -6,7 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(@"C:\keys"))
+var directoryPath = @"/app/keys";
+builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(directoryPath))
                 .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
                 {
                     EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
