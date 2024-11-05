@@ -104,7 +104,10 @@ pipeline {
             steps { 
                 script { 
                     echo "Running the application using Docker Compose" 
-                    powershell "VERSION_TAG=${VERSION_TAG} docker-compose up -d" 
+                    powershell """
+                        \$env:VERSION_TAG = '${VERSION_TAG}'
+                        docker-compose up -d
+                    """
                 } 
             } 
         }
