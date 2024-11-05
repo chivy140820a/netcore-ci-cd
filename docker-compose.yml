@@ -2,11 +2,12 @@ version: "3.8"
 
 services:
   app:
-    image: chivy14082000/netccicd:${VERSION_TAG}
+    image: chivy14082000/netccicd:63
     ports:
       - "8081:80"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
     volumes:
       - ./keys:/app/keys
+      - ./certs:/app/certs
     restart: always
